@@ -3,7 +3,8 @@
 # Karafka app object
 class KarafkaApp < Karafka::App
   setup do |config|
-    config.kafka = { 'bootstrap.servers': '127.0.0.1:9092' }
+    #config.kafka = { 'bootstrap.servers': '127.0.0.1:9092' }
+    config.kafka = { 'bootstrap.servers': ENV["KAFKA_URL"] }
     config.client_id = 'example_app'
     config.concurrency = 2
     config.max_wait_time = 500 # 0.5 second
@@ -44,5 +45,5 @@ end
 Karafka::Web.enable!
 
 # You can tag your processes with any info you want and it is going to be visible via the Web UI
-git_hash = `git rev-parse --short HEAD`.strip
-Karafka::Process.tags.add(:commit, "##{git_hash}")
+#git_hash = `git rev-parse --short HEAD`.strip
+#Karafka::Process.tags.add(:commit, "##{git_hash}")

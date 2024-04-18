@@ -2,7 +2,8 @@
 
 source 'https://rubygems.org'
 
-plugin 'diffend'
+# commented out plugin because project has no diffend.yml, and I don't have a diffend/mend account
+# plugin 'diffend'
 
 gem 'karafka', '>= 2.2.4'
 gem 'karafka-web'

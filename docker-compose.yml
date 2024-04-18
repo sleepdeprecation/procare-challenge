@@ -1,12 +1,46 @@
 version: '2'
 
 services:
+  app:
+    container_name: app
+    image: porcare-challenge
+
+    networks:
+      - internal
+      - external
+
+    ports:
+      - 3000:3000
+
+    environment:
+      DATABASE_URL: "postgresql://pguser:pgpasswd@postgres:5432"
+      KAFKA_URL: "kafka:9092"
+
+    build:
+      context: .
+      tags:
+        - "procare-challenge"
+
+  app-consumer:
+    container_name: app-consumer
+    image: procare-challenge
+    command: bundle exec karafka server
+    networks:
+      - internal
+    environment:
+      DATABASE_URL: "postgresql://pguser:pgpasswd@postgres:5432"
+      KAFKA_URL: "kafka:9092"
+
+
   kafka:
     container_name: kafka
     image: confluentinc/cp-kafka:7.5.1
 
     ports:
       - 9092:9092
+
+    networks:
+      - internal
 
     environment:
       CLUSTER_ID: kafka-docker-cluster-1
@@ -16,8 +50,29 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092
       KAFKA_BROKER_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
       ALLOW_PLAINTEXT_LISTENER: 'yes'
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+
+    ports:
+      - 5432:5432
+
+    networks:
+      - internal
+
+    environment:
+      POSTGRES_PASSWORD: pgpasswd
+      POSTGRES_USER: pguser
+      POSTGRES_DB: procare_production
+
+networks:
+  external:
+    internal: false
+  internal:
+    internal: true
