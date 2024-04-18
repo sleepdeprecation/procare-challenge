@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+arch="amd64"
+#root_disk_src="https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-${arch}.qcow2"
+root_disk_src="https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-${arch}.qcow2"
+
+mkdir -p disks
+
+pushd disks
+  curl -L "${root_disk_src}" -o base.qcow2
+popd

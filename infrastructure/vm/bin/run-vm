@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+arch="amd64"
+qemu_bin="qemu-system-x86_64"
+
+if [[ ! -f disks/base.qcow2 ]]; then
+  ./bin/fetch-root-disk
+fi
+
+if [[ ! -f disks/root.qcow2 ]]; then
+  # create root disk if it doesn't exist
+  cp disks/base.qcow2 disks/root.qcow2
+
+  # grow disk from 2gb to 8gb, just so there's enough space for everything
+  # 2gb _should_ be enough, but lets just be careful, disk space is cheap, and qcow is a sparse representation, so on-disk size is only used space
+  qemu-img resize disks/root.qcow2 8G
+fi
+
+# create a cloud init iso
+pushd ../cloud-init
+  ./build-iso.sh
+popd
+
+mv ../cloud-init/seed.iso disks/cloud-init.iso
+
+$qemu_bin \
+  -net nic \
+  -net user,hostfwd=tcp::2222-:22 \
+  -m 512 \
+  -drive file=disks/root.qcow2,if=virtio \
+  -drive driver=raw,file=disks/cloud-init.iso,if=virtio \
+  -nographic

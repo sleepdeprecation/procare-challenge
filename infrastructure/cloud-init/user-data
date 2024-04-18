@@ -1,0 +1,6 @@
+#cloud-config
+#vim:syntax=yaml
+
+# NOTE! If you're copying this into your cloud provider's user-data form, you will need to either remove this section, or manually set the value to your ssh public key.
+ssh_authorized_keys:
+ - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2Q9PXgzy7d8zTzGd0R+B6gZRZqQwd3L5tTJX3i72XW sleep's laptop

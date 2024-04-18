@@ -46,3 +46,29 @@ I need to figure out a deployment mechanism for this, one which can be integrate
 Potential problem: I don't know if bitbucket has the features i'd want for this, I do know github does, and I may migrate to that simply because I know what I need from there (container registry, deployments and ci system), and it's all integrated with a repo. -- bitbucket may be the wrong call here, looks less fleshed out than github or gitlab offerings.
 
 theoretically i can maximum jank this but i don't want to maximum jank this, i want to make something good.
+
+
+## Delivery Adventure
+
+okay, fresh the next day, lets see what we can do.
+
+i think that before i can actually get into the automated/continuous deployments, i need to actually figure out how this thing is going to be made "live".
+lets go look at terraform providers and see if anything immediately pops out as being a potentially simple option. my backup plan is going to be ansible.
+
+alright, i don't love any of the available options, and in the interest of keeping the costs minimal, i'm going to go with the tried and true "just get yourself a VM running somewhere" method, hopefully somewhere that supports cloud-init (which, isn't super hard, you can get cloud-init working with bare metal using the nocloud provider).
+
+so, things i need to do:
+
+- tooling for getting a vm running with qemu (ideally supports both arm and x64)
+- tooling for putting together a cloud init nocloud iso
+- actually get a vm running this setup, ideally with a persistent storage space for kafka and postgres data
+
+so, vm with qemu
+
+- download debian nocloud disk image -- https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-nocloud-arm64.qcow2
+
+actually, nocloud is wrong -- that's for a super basic vm that isn't running in the cloud and doesn't have cloudinit, we need genericcloud
+
+oops genericcloud also isn't right, we need just "generic" because it has the networking drivers necessary for having a network
+
+with generic networking is now working, and the cloud init stuff also seems to be working, so calling that a good resting point for right now, and will focus on actually configuring the instance in cloud init later.

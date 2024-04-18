@@ -1,0 +1,2 @@
+infrastructure/cloud-init/*.iso
+infrastructure/vm/disks
