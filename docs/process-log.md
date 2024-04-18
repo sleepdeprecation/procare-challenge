@@ -48,7 +48,7 @@ Potential problem: I don't know if bitbucket has the features i'd want for this,
 theoretically i can maximum jank this but i don't want to maximum jank this, i want to make something good.
 
 
-## Delivery Adventure
+## Delivery Adventure (actually turned out to be more setup adventure idk)
 
 okay, fresh the next day, lets see what we can do.
 
