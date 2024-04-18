@@ -38,3 +38,11 @@ added app (and container build) to compose file, also added postgres and a karaf
 added bin/docker-bootstrap for quickly bootstraping the composed setup (run docker compose up first, and then the bin/docker-bootstrap script)
 
 fully able to run and create new environment, calling that a good stopping point for tonight.
+
+## Just some thinking before actually turning in for the night
+
+I need to figure out a deployment mechanism for this, one which can be integrated into a CI system fairly easily; need to research possible options, i think maybe building a tiny web service that can get webhooks from bitbucket, and which then controls the docker compose setup (changing the container tag) is probably the right call.
+
+Potential problem: I don't know if bitbucket has the features i'd want for this, I do know github does, and I may migrate to that simply because I know what I need from there (container registry, deployments and ci system), and it's all integrated with a repo. -- bitbucket may be the wrong call here, looks less fleshed out than github or gitlab offerings.
+
+theoretically i can maximum jank this but i don't want to maximum jank this, i want to make something good.
