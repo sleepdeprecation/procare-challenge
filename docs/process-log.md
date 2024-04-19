@@ -115,3 +115,22 @@ the error that's coming up is can't find nokogiri, and it's looking for a differ
 Except no, Gemfile.lock is copied into the builder container?
 
 It looks like running a `bundle install` after the copy _should_ result in things getting fixed? lets find out.
+
+and that was it!! nice!
+
+hmm, seems like it can properly talk to postgres, but isn't connecting to kafka :/
+
+Or, most likely it can, but kafka's advertised listeners is a static port, so requests coming to it from a different one might be getting bounced (I think I saw this when i was getting this setup with docker compose initially)
+
+So I'm very confused. I can connect to kafka's port and I'm not blocked from the app container, but attempting to create topics just ends in pain and sadness :/
+
+I'm going to try running these services on not a virtual machine (the lil server i mentioned earlier), and see if I can get it working.
+I'm still confused why it worked in docker compose but doesn't work here, but idk idk idk.
+
+okay so it's not a virtual machine vs real machine issue, so that's nice at least. still going to keep debugging on my live cluster.
+
+the error seems to be from a variable having a port in it when I assumed it didn't. Removing the extra port from the stanza got kafka running as expected.
+
+okay! and with some minor changes needed to the service's nomad definition, we are up and running!!
+
+time to see if i can do the full bootstrap from zero with a VM (assuming already produced docker containers).

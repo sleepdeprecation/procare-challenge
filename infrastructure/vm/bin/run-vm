@@ -16,17 +16,19 @@ if [[ ! -f disks/root.qcow2 ]]; then
   qemu-img resize disks/root.qcow2 8G
 fi
 
-# create a cloud init iso
-pushd ../cloud-init
-  ./build-iso.sh
-popd
+if [[ ! -f disks/cloud-init.iso ]]; then
+  # create a cloud init iso
+  pushd ../cloud-init
+    ./build-iso.sh
+  popd
 
-mv ../cloud-init/seed.iso disks/cloud-init.iso
+  mv ../cloud-init/seed.iso disks/cloud-init.iso
+fi
 
 $qemu_bin \
   -net nic \
-  -net user,hostfwd=tcp::2222-:22 \
-  -m 512 \
+  -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::4646-:4646,hostfwd=tcp::3000-:3000 \
+  -m 2048 \
   -drive file=disks/root.qcow2,if=virtio \
   -drive driver=raw,file=disks/cloud-init.iso,if=virtio \
   -nographic
