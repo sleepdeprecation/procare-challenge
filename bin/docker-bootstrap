@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-docker compose exec app bash -c 'bundle exec rake db:create && \
-  bundle exec rake db:migrate && \
-  bundle exec rake db:seed && \
-  bundle exec karafka topics migrate && \
-  bundle exec karafka-web migrate'
+set -x -e
+
+bundle exec rake db:migrate
+bundle exec karafka topics migrate
+bundle exec karafka-web migrate

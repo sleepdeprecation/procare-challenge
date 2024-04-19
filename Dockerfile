@@ -1,11 +1,9 @@
 FROM ruby:3.3-slim as builder
 
-ENV RAILS_ENV=PRODUCTION
+ENV RAILS_ENV=production
 
 # Need to install build-essential so that we can build native extension gems (don't love)
 RUN apt -y update && apt -y install build-essential libpq-dev && apt -y clean
-# RUN apt -y update && apt -y install build-essential libpq-dev nodejs npm && apt -y clean
-# RUN npm install -g corepack && corepack enable
 
 WORKDIR /app
 
