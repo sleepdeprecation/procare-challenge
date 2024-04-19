@@ -72,3 +72,46 @@ actually, nocloud is wrong -- that's for a super basic vm that isn't running in 
 oops genericcloud also isn't right, we need just "generic" because it has the networking drivers necessary for having a network
 
 with generic networking is now working, and the cloud init stuff also seems to be working, so calling that a good resting point for right now, and will focus on actually configuring the instance in cloud init later.
+
+## initial cloud init fun
+
+first round of cloud init fun: getting docker and nomad installed.
+had to figure out how to get their key files into the instance (write_files ftw), but they now automagically install, so that's nice.
+
+next steps:
+- get nomad running
+- write nomad config files to run all the services in docker-compose in nomad
+- if all that works, get a new, persistent disk setup for postgres, kafka
+
+## some reflection before continuing
+
+With an evening of reflection, I think I've ended up going off on a choose your own adventure tangent here, focusing on building reproducable infrastructure for the project. I'm going to finish this work, and then get to the deployment system, which will be nomad.
+
+## alright lets get a nomad running
+
+just adding a runcmd to systemctl enable docker and nomad worked great, just needed to port forward nomad in the run-vm script
+
+
+Went down an annoying tangent that ended up not working out, trying to get the dynamically allocated storage stuff working. My feeling right now is that lets just leave that as an exercise to the reader, and the volumes can either be figured out later, or left out, this is distracting me from my main goal.
+
+got to the important step of actually trying to run the app, aaaaaaand got blocked because i didn't build an x64 container, just an arm one, oops
+
+    docker buildx build -t ghcr.io/sleepdeprecation/procare-challenge --push .
+
+ideally, if i get the actions working, this shouldn't be an issue (because the actions won't need to have a multi arch build, they can just be done on x64).
+yeah don't love waiting for the classic intel build to finish, the apple silicon processors are really nice, but `bundle install` has taken 3x as long so far for the intel version because _emulated_, and my bet is it'll take even longer than just the five minutes it's already needed.
+oh boy we've reached 400 seconds for just bundle install 🙃
+(don't put emoji in markdown files? fight me)
+
+just installing rails itself has been a huge part of this process, so that's _fun_ _great_ _really excellent_. am i sunk cost fallacy-ing myself into believing that it'll have to finish soon enough on my laptop to not just download the repo on my lil intel server and run the build over there? maybe. alright i'm doing it, lets see who finishes first, trying to run this on another computer, or the one that started almost 11 minutes ago? lol as soon as i opened the other terminal window it finished
+
+okay so how about running it this time?? downloading image,,,,,,,,
+
+well i'm getting a _different_ error now, this time it looks like the native extensions didn't properly build? seems like the answer is just go build on the other machine.
+tiny mini desktop with an 8 year old processor i use as a server that's just hanging out in my office for the win! built the whole container in a little over two minutes.
+
+okay so maybe this time i can get the service running in nomad? no, and same error.
+the error that's coming up is can't find nokogiri, and it's looking for a different version of nokogiri than the one that's installed, my guess is because i didn't copy in Gemfile.lock for the bundle install process, so the lock doesn't agree with what's installed.
+Except no, Gemfile.lock is copied into the builder container?
+
+It looks like running a `bundle install` after the copy _should_ result in things getting fixed? lets find out.

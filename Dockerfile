@@ -25,4 +25,6 @@ RUN gem install bundler -v '2.4.19'
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY . .
 
+RUN bundle install
+
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
